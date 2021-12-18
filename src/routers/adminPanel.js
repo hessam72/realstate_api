@@ -74,7 +74,16 @@ router.post('/field', isAdmin, async(req, res) => {
 
 })
 
+router.post('/users/manage', isAdmin, async(req, res) => {
+    try {
+        //manage users
 
+
+
+    } catch (e) {
+        res.send(e.toString())
+    }
+})
 
 
 

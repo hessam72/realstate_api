@@ -37,7 +37,6 @@ router.get('/user/profile', Auth, async(req, res) => {
     }
 })
 
-
 //update user
 router.patch('/user/update', Auth, async(req, res) => {
         try {
@@ -100,6 +99,40 @@ router.delete('/user/delete', Auth, async(req, res) => {
 
     } catch (e) {
         res.send('error: ' + e)
+    }
+})
+
+//save an add to user saved adds
+router.post('/user/save_add', Auth, async(req, res) => {
+    //better to use transaction here
+    try {
+        // get add id and save it to user database and vice-versa for add db
+        const add_id = req.body.add_id
+        const user = req.user
+            // user.saved_adds += { add_id }
+        await User.updateOne({ _id: user._id }, { $push: { saved_adds: add_id } })
+        await Add.updateOne({ _id: add_id }, { $push: { saved_by: user._id } })
+        res.send('add saved successfuly')
+
+        // const u = await Add.findById(add_id).populate('saved_by')
+
+    } catch (e) {
+        res.send(e.toString())
+    }
+})
+
+// delete add with concat saved_by
+router.delete('/user/add', Auth, async(req, res) => {
+    try {
+        const add_id = req.body.add_id
+        const add = await Add.findById({ _id: add_id })
+        await add.remove()
+            // await Add.deleteOne({ _id: add_id })
+
+        res.send('done')
+
+    } catch (e) {
+        res.send(e.toString())
     }
 })
 

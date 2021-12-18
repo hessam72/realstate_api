@@ -40,6 +40,10 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    saved_adds: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Add'
+    }],
     tokens: [{
         token: {
             type: String,
