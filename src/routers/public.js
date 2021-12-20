@@ -1,15 +1,21 @@
-const mongoose = require('mongoose')
 const express = require('express')
 const router = new express.Router()
-const Auth = require('../middleware/auth')
-const isAdmin = require('../middleware/is_admin')
+
 const User = require('../models/user')
 const Add = require('../models/add')
 const Category = require('../models/category')
 const Field = require('../models/field')
 const City = require('../models/city')
 
-// login and singups
+
+
+
+router.get('/', (req, res) => {
+
+    res.render('/index.html', { data: "hiiiiiii" })
+
+})
+
 
 router.post('/login', async(req, res) => {
     try {
@@ -53,7 +59,7 @@ router.get('/add/:id', async(req, res) => {
         const id = req.params.id
             //retrive category
             //reterive owner
-        const add = await Add.findById(id).populate('owner').populate('category')
+        const add = await Add.find({ _id: id }).populate('owner').populate('category')
 
         res.send(add)
 
@@ -78,6 +84,9 @@ router.get('/adds', async(req, res) => {
         req.query.owner ? query["owner"] = req.query.owner : ''
         req.query.field_id ? query["fields.field_id"] = req.query.field_id : ''
         req.query.city ? query["city"] = req.query.city : ''
+
+        //only fetch active adds
+        query["is_active"] = true
 
 
         //sorting

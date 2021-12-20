@@ -40,6 +40,10 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    is_active: {
+        type: Boolean,
+        default: true
+    },
     saved_adds: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Add'
@@ -112,6 +116,9 @@ userSchema.statics.findByCredentials = async(email, password) => {
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) {
         throw new Error('unable.. to login')
+    }
+    if (!user.is_active) {
+        throw new Error('you are currently not allowed to log in')
     }
     return user
 

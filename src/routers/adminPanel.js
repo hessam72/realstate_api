@@ -74,11 +74,35 @@ router.post('/field', isAdmin, async(req, res) => {
 
 })
 
-router.post('/users/manage', isAdmin, async(req, res) => {
+router.post('/user/manage', isAdmin, async(req, res) => {
     try {
-        //manage users
+        //determine that user should be activate or deactive
+        const is_active = req.body.is_active ? true : false
+        console.log(is_active)
 
+        //deActive a user
+        const target_user_id = req.body.user_id
+            // ban user
+        const a = await User.updateOne({ _id: target_user_id }, { is_active })
+            //deactive their adds
+        const b = await Add.updateMany({ owner: target_user_id }, { is_active })
+        console.log(a)
+            // console.log(b)
 
+        res.send('user and their adds updated successfully')
+
+    } catch (e) {
+        res.send(e.toString())
+    }
+})
+router.post('/add/manage', isAdmin, async(req, res) => {
+    try {
+        const { add_id } = req.body
+        const is_active = req.body.is_active ? true : false
+
+        const a = await Add.updateOne({ _id: add_id }, { is_active })
+        console.log(a)
+        res.send('add edited successfully')
 
     } catch (e) {
         res.send(e.toString())

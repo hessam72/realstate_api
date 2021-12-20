@@ -33,6 +33,11 @@ const addSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category'
     },
+    //adds should be activated by admin
+    is_active: {
+        type: Boolean,
+        default: false
+    },
     city: {
         required: true,
         type: mongoose.Schema.Types.ObjectId,
@@ -52,8 +57,17 @@ const addSchema = new mongoose.Schema({
 
 addSchema.index({ title: 'text', description: 'text' });
 
+addSchema.post('find', async function(docs) {
+    //loop array and only return the active adds
+    docs.forEach((doc) => {
+        if (!doc.is_active) {
+            docs.splice(docs.indexOf(doc), 1)
+        }
+    })
+})
 
-addSchema.pre('remove', async function(next) {
+
+addSchema.pre('remove', async function() {
     try {
         const add = this
             // delete current add id from users saved adds 
@@ -64,7 +78,7 @@ addSchema.pre('remove', async function(next) {
         const user = new User()
         console.log(user)
 
-        next()
+        // next()
 
     } catch (e) {
         return e
